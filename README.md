@@ -21,6 +21,7 @@ made.
 - **JavaScript**: For implementing game logic, randomization, 
 and user interaction. 
 ## How to use 
+- **The Images must be in the same folder as the source code for the program to process it.**
 - **Start** : The web-site begins with Round 1, displaying 9 random 
 images. 
 - **Understand the Goal**: (The web-site will specify a target property for each round (e.g., color-red or texture-wood). - Your task is to select images that share the target property.) 
