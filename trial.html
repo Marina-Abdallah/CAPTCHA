@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Selection </title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px auto; max-width: 600px; }
+    .grid img { width: 100%; height: auto; border: 2px solid transparent; cursor: pointer; transition: 0.3s; }
+    .grid img.selected { border-color: #4CAF50; box-shadow: 0 0 10px #4CAF50; }
+    button { padding: 10px 20px; font-size: 16px; cursor: pointer; margin-top: 20px; }
+    .message { margin-top: 20px; font-size: 18px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Image Selection</h1>
+  <h2 id="roundTitle">Round 1: Find Images with <span id="targetProperty">[Property]</span></h2>
+  <div class="grid" id="imageGrid"></div>
+  <button onclick="checkSelection()">Submit Selection</button>
+  <div class="message" id="message"></div>
+  <script>
+    // Predefined images with properties
+    const images = [
+      { src: 'image1.jpg', property: 'color-red' },
+      { src: 'image2.jpg', property: 'color-red' },
+      { src: 'image3.jpg', property: 'texture-wood' },
+      { src: 'image4.jpg', property: 'texture-wood' },
+      { src: 'image5.jpg', property: 'element-sea' },
+      { src: 'image6.jpg', property: 'element-sea' },
+      { src: 'image7.jpg', property: 'element-fire' },
+      { src: 'image8.jpg', property: 'element-fire' },
+      { src: 'image9.jpg', property: 'color-purple' },
+      { src: 'image10.jpg', property: 'color-purple' },
+      { src: 'image11.jpg', property: 'element-bicycle' },
+      { src: 'image12.jpg', property: 'element-bicycle' },
+    ];
+
+    const properties = ['color-red', 'color-purple', 'texture-wood', 'element-bicycle', 'element-sea', 'element-fire'];
+
+    let currentRound = 1;
+    const maxRounds = 3;
+    let targetProperty = '';
+    let selectedImages = [];
+    let score = 0;
+
+    function startRound() {
+      if (currentRound > maxRounds) {
+        displayFinalScore();
+        return;
+      }
+
+      // Reset selection and message
+      selectedImages = [];
+      document.getElementById('message').textContent = '';
+
+      // Set the target property for this round
+      targetProperty = properties[Math.floor(Math.random() * properties.length)];
+      document.getElementById('roundTitle').innerHTML = `Round ${currentRound}: Find Images with <span id="targetProperty">${targetProperty}</span>`;
+
+      // Render random images
+      renderImages();
+    }
+
+    function renderImages() {
+      const grid = document.getElementById('imageGrid');
+      grid.innerHTML = '';
+      const randomImages = getRandomImages();
+
+      randomImages.forEach((img) => {
+        const imgElem = document.createElement('img');
+        imgElem.src = img.src;
+        imgElem.dataset.property = img.property;
+        imgElem.onclick = () => toggleSelection(imgElem, img);
+        grid.appendChild(imgElem);
+      });
+    }
+
+    function getRandomImages() {
+      // Shuffle and pick 9 random images
+      const shuffled = [...images].sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, 9);
+    }
+
+    function toggleSelection(imgElem, img) {
+      if (selectedImages.includes(img)) {
+        selectedImages = selectedImages.filter((i) => i !== img);
+        imgElem.classList.remove('selected');
+      } else {
+        selectedImages.push(img);
+        imgElem.classList.add('selected');
+      }
+    }
+
+    function checkSelection() {
+      const message = document.getElementById('message');
+      if (selectedImages.length === 0) {
+        message.textContent = 'Please select some images!';
+        return;
+      }
+
+      // Check if all selected images match the target property
+      const isCorrect = selectedImages.every((img) => img.property === targetProperty);
+      if (isCorrect) {
+        score += 1; // Add points for correct images
+        message.textContent = `Correct! You choose correct.`;
+        message.style.color = 'green';
+      } else {
+        message.textContent = 'Incorrect selection. Try again in the next round!';
+        message.style.color = 'red';
+      }
+
+      // Move to the next round
+      currentRound++;
+      setTimeout(startRound, 2000); // Delay for better user experience
+    }
+
+    function displayFinalScore() {
+      document.getElementById('imageGrid').innerHTML = '';
+      if(score==3){
+      document.getElementById('message').textContent = `Your answers were correct!!`;}
+      else if (score<3 && score>=1){
+        document.getElementById('message').textContent = `some of Your answers were wrong!!`;
+      }
+      else{
+        document.getElementById('message').textContent = `Your answers were wrong!!`;
+      }
+    }
+
+    // Start the first round
+    startRound();
+  </script>
+</body>
+</html>
